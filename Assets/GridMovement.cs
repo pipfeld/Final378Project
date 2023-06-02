@@ -27,8 +27,10 @@ public class GridMovement : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Space)&& !isMoving){
             //Debug.Log("Here");
             Vector3Int position = new Vector3Int((int)transform.position.x,(int)transform.position.y,0);
-            if(GameManager.instance.tileManager.IsInteractable(position))
+            if(GameManager.instance.tileManager.IsInteractable(position)){
+                GameManager.instance.tileManager.SetInteracted(position);
                 Debug.Log("Tile is interactable");
+            }
         }
     }
     private IEnumerator MovePlayer(Vector3 direction){

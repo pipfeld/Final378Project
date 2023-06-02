@@ -7,7 +7,11 @@ public class TileManager : MonoBehaviour
 {
     [SerializeField] private Tilemap plants;
 
+    [SerializeField] private Tilemap Champion;
+    private int stack = 0;
+
     [SerializeField] private Tile Hidden;
+    [SerializeField] private Tile Build;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +34,12 @@ public class TileManager : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void SetInteracted(Vector3Int position){
+        position = new Vector3Int(-4,-2+stack,0);
+        stack++;
+        Champion.SetTile(position,Build);
     }
 
     
