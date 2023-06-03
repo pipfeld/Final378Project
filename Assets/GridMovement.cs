@@ -18,10 +18,10 @@ public class GridMovement : MonoBehaviour
     void Update()
     {
         
-        if (Input.GetKey(KeyCode.A)&& !isMoving)
+        if (Input.GetKey(KeyCode.A)&& !isMoving&& transform.position.x > -9)
             StartCoroutine(MovePlayer(Vector3.left));
         
-        if (Input.GetKey(KeyCode.D)&& !isMoving)
+        if (Input.GetKey(KeyCode.D)&& !isMoving && transform.position.x<-4)
             StartCoroutine(MovePlayer(Vector3.right));
 
         if(Input.GetKeyDown(KeyCode.Space)&& !isMoving){
@@ -29,7 +29,12 @@ public class GridMovement : MonoBehaviour
             Vector3Int position = new Vector3Int((int)transform.position.x,(int)transform.position.y,0);
             if(GameManager.instance.tileManager.IsInteractable(position)){
                 GameManager.instance.tileManager.SetInteracted(position);
-                Debug.Log("Tile is interactable");
+                
+            }
+            if (GameManager.instance.tileManager.IsChapmion(position))
+            {
+                GameManager.instance.tileManager.SetChampion(position);
+
             }
         }
     }

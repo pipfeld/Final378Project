@@ -7,11 +7,14 @@ public class TileManager : MonoBehaviour
 {
     [SerializeField] private Tilemap plants;
 
-    [SerializeField] private Tilemap Champion;
+    [SerializeField] private Tilemap champion;
     private int stack = 0;
 
     [SerializeField] private Tile Hidden;
     [SerializeField] private Tile Build;
+
+    
+    [SerializeField] private GameObject shape;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,10 +39,43 @@ public class TileManager : MonoBehaviour
         return false;
     }
 
+    public bool IsChapmion(Vector3Int position)
+    {
+        position = new Vector3Int(position.x - 1, position.y - 1, 0);
+        TileBase tile = champion.GetTile(position);
+        Debug.Log(position);
+        //Debug.Log(tile);
+
+        if (tile != null)
+        {
+            return true;
+        }
+        return false;
+    }
+
     public void SetInteracted(Vector3Int position){
-        position = new Vector3Int(-4,-2+stack,0);
-        stack++;
-        Champion.SetTile(position,Build);
+        if(stack <7){
+            position = new Vector3Int(-4,-2+stack,0);
+            stack++;
+            champion.SetTile(position,Build);
+        }
+        
+        
+    }
+
+    public void SetChampion(Vector3Int position)
+    {
+        GameObject obj = Instantiate(shape, new Vector3(-1.5f, -1.5f, 0), Quaternion.identity);
+        
+        for(int i =0; stack>i; stack--){
+            position = new Vector3Int(-4, -3 + stack, 0);
+        
+            champion.SetTile(position, null);
+        }
+        SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
+        sr.sprite = Build.sprite;
+        
+
     }
 
     
