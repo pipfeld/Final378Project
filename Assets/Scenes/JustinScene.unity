@@ -506,7 +506,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeToMove: 0.2
-  bounded: 0
+  bounded: 1
   minX: -9
   maxX: -4
 --- !u!212 &1640287721

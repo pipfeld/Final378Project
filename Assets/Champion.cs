@@ -9,6 +9,7 @@ public class Champion : MonoBehaviour
     public Tile[] stack;
     public int health;
     public int damage;
+    public List<GameObject> sprites;
 
 
 

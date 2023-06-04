@@ -15,6 +15,7 @@ public class TileManager : MonoBehaviour
 
     
     [SerializeField] private GameObject shape;
+    [SerializeField] private GameObject sprite;
     // Start is called before the first frame update
     void Start()
     {
@@ -66,14 +67,20 @@ public class TileManager : MonoBehaviour
     public void SetChampion(Vector3Int position)
     {
         GameObject obj = Instantiate(shape, new Vector3(-1.5f, -1.5f, 0), Quaternion.identity);
-        
+        int temp = stack;
         for(int i =0; stack>i; stack--){
             position = new Vector3Int(-4, -3 + stack, 0);
-        
+
             champion.SetTile(position, null);
+
+            GameObject S = Instantiate(sprite, new Vector3(-1.5f, -1.5f + (temp-stack), 0), Quaternion.identity);
+            S.transform.parent = obj.transform;
+            obj.GetComponent<Champion>().sprites.Add(S);
+            SpriteRenderer sr = S.GetComponent<SpriteRenderer>();
+            sr.sprite = Build.sprite;
         }
-        SpriteRenderer sr = obj.GetComponent<SpriteRenderer>();
-        sr.sprite = Build.sprite;
+        
+        
         
 
     }
