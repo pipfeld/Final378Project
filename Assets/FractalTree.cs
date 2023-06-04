@@ -156,7 +156,7 @@ public class RandomMaterialGenerator : MonoBehaviour
     public static Material GenerateRandomMaterial(float lightness)
     {
         // Create a new instanced material
-        Material newMaterial = new Material(Shader.Find("Standard"));
+        Material newMaterial = new Material(Shader.Find("Mobile/Bumped Diffuse"));
 
         // Set unique name for the new material
         newMaterial.name = "RandomMaterial_" + Random.Range(1000, 9999);
@@ -164,13 +164,12 @@ public class RandomMaterialGenerator : MonoBehaviour
         // Randomize material properties
         Color randomColor = Random.ColorHSV(0f, 1f, 0f, 1f, lightness, lightness);
         newMaterial.color = randomColor;
+        newMaterial.SetColor("_Color", randomColor);
         newMaterial.SetFloat("_Metallic", Random.Range(0f, 1f));
-        newMaterial.SetFloat("_Smoothness", Random.Range(0f, 1f));
-        newMaterial.SetFloat("_SpecularHighlights", Random.Range(0f, 1f));
-        newMaterial.SetFloat("_GlossyReflections", Random.Range(0f, 1f));
+        newMaterial.SetFloat("_Glossiness", Random.Range(0f, 1f));
         newMaterial.SetFloat("_BumpScale", Random.Range(0f, 1f));
-        newMaterial.SetFloat("_OcclusionStrength", Random.Range(0f, 1f));
         newMaterial.SetFloat("_Parallax", Random.Range(0f, 1f));
+        newMaterial.SetFloat("_OcclusionStrength", Random.Range(0f, 1f));
         newMaterial.SetFloat("_EmissionScaleUI", Random.Range(0f, 1f));
 
         // Randomly assign a gradient
