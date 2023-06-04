@@ -67,6 +67,7 @@ public class TileManager : MonoBehaviour
     public void SetChampion(Vector3Int position)
     {
         GameObject obj = Instantiate(shape, new Vector3(-1.5f, -1.5f, 0), Quaternion.identity);
+        Champion stats = obj.GetComponent<Champion>();
         int temp = stack;
         for(int i =0; stack>i; stack--){
             position = new Vector3Int(-4, -3 + stack, 0);
@@ -75,11 +76,20 @@ public class TileManager : MonoBehaviour
 
             GameObject S = Instantiate(sprite, new Vector3(-1.5f, -1.5f + (temp-stack), 0), Quaternion.identity);
             S.transform.parent = obj.transform;
-            obj.GetComponent<Champion>().sprites.Add(S);
+            stats.sprites.Add(S);
             SpriteRenderer sr = S.GetComponent<SpriteRenderer>();
             sr.sprite = Build.sprite;
+            stats.damage += 1;
+            stats.health += 3;
+
         }
         
+        obj.GetComponent<BoxCollider2D>().size = new Vector2(obj.GetComponent<BoxCollider2D>().size.x,temp);
+        if(temp%2==1){
+            obj.GetComponent<BoxCollider2D>().offset = new Vector2(0, (temp) / 2);
+        }else{
+            obj.GetComponent<BoxCollider2D>().offset = new Vector2(0, (temp) / 2-.5f);
+        }
         
         
 
