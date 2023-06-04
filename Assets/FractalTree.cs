@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class FractalTree : MonoBehaviour
 {
@@ -155,8 +156,12 @@ public class RandomMaterialGenerator : MonoBehaviour
 {
     public static Material GenerateRandomMaterial(float lightness)
     {
+        Shader myShader = Shader.Find("Mobile/VertexLit");
+        if (myShader == null)
+            Debug.LogError("shader find failed");
         // Create a new instanced material
-        Material newMaterial = new Material(Shader.Find("Mobile/Bumped Diffuse"));
+        Material newMaterial = new Material(myShader);
+
 
         // Set unique name for the new material
         newMaterial.name = "RandomMaterial_" + Random.Range(1000, 9999);
