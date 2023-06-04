@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections.Generic;
+
 
 public class FractalTree : MonoBehaviour
 {
@@ -16,6 +18,11 @@ public class FractalTree : MonoBehaviour
     [SerializeField] private float pruneFactorScale = 1.2f;
     private int leafDepth = 8;
 
+    [SerializeField] private float hitboxRange = 1.5f; // Range to detect player in AI check
+    [SerializeField] private float branchSpeed = 5f; // Speed at which the branches move towards the player
+
+    private GameObject[] leavesHitboxes; // Array to store the hitboxes of the leaves
+
     // Wind properties
     [SerializeField] private float windAmplitude = 0.0001f;
     [SerializeField] private float windFrequency = 1f;
@@ -26,6 +33,9 @@ public class FractalTree : MonoBehaviour
         if (randomize)
             ScrambleFactors();
         DrawTree(transform.position.x, transform.position.y, 90, depth, null, 1f); // x, y, angle, depth, parentBranch, pruneFactorScale
+
+        // Create hitboxes for the leaves
+        CreateLeavesHitboxes();
     }
 
     private void Update()
@@ -33,6 +43,9 @@ public class FractalTree : MonoBehaviour
         // Update wind factor based on time and frequency
         float windFactor = Mathf.Sin(Time.time * windFrequency) * windAmplitude;
         ApplyWindToTree(transform, windFactor, 0);
+
+        // Check if the player is in range of the branches
+        CheckPlayerInRange();
     }
 
     private void DrawTree(float x1, float y1, float angle, int depth, GameObject parentBranch, float pruneFactorScale)
@@ -76,7 +89,7 @@ public class FractalTree : MonoBehaviour
         line.enabled = true;
 
         // set line renderer materials based on depth
-        if (depth > leafDepth - Random.Range(0, leafDepth - leafDepth/2))
+        if (depth > leafDepth - Random.Range(0, leafDepth - leafDepth / 2))
         {
             line.material = barkMaterial;
             line.startWidth = depth * 0.08f * beginningStemWidthFactor;
@@ -96,59 +109,170 @@ public class FractalTree : MonoBehaviour
         return branch;
     }
 
-private void ApplyWindToTree(Transform treeTransform, float windFactor, int depth = 0)
-{
-    for (int i = 0; i < treeTransform.childCount; i++)
+    private void ApplyWindToTree(Transform treeTransform, float windFactor, int depth = 0)
     {
-        Transform child = treeTransform.GetChild(i);
-
-        // Skip applying wind to the first branch (genesis)
-        if (depth > 0)
+        for (int i = 0; i < treeTransform.childCount; i++)
         {
-            // Apply wind sway to each branch
-            Vector3 originalPosition = child.localPosition;
-            Vector3 swayPosition = new Vector3(originalPosition.x + windFactor * depth, originalPosition.y, originalPosition.z);
-            child.localPosition = swayPosition;
+            Transform child = treeTransform.GetChild(i);
 
-            // Apply wind scale to each branch
-            Vector3 originalScale = child.localScale;
-            float scaleMultiplier = 1f + windFactor * 0.1f * depth;
-            Vector3 swayScale = new Vector3(originalScale.x * scaleMultiplier, originalScale.y, originalScale.z * scaleMultiplier);
-            child.localScale = swayScale;
-
-            // Adjust child branch start position to match end position of current branch
-            if (i > 0)
+            // Skip applying wind to the first branch (genesis)
+            if (depth > 0)
             {
-                Transform prevChild = treeTransform.GetChild(i - 1);
-                Vector3 prevChildEndPos = prevChild.TransformPoint(Vector3.zero);
-                Vector3 childStartPos = child.InverseTransformPoint(prevChildEndPos);
-                child.localPosition += childStartPos;
+                // Apply wind sway to each branch
+                Vector3 originalPosition = child.localPosition;
+                Vector3 swayPosition = new Vector3(originalPosition.x + windFactor * depth, originalPosition.y, originalPosition.z);
+                child.localPosition = swayPosition;
+
+                // Apply wind scale to each branch
+                Vector3 originalScale = child.localScale;
+                float scaleMultiplier = 1f + windFactor * 0.1f * depth;
+                Vector3 swayScale = new Vector3(originalScale.x * scaleMultiplier, originalScale.y, originalScale.z * scaleMultiplier);
+                child.localScale = swayScale;
+
+                // Adjust child branch start position to match end position of current branch
+                if (i > 0)
+                {
+                    Transform prevChild = treeTransform.GetChild(i - 1);
+                    Vector3 prevChildEndPos = prevChild.TransformPoint(Vector3.zero);
+                    Vector3 childStartPos = child.InverseTransformPoint(prevChildEndPos);
+                    child.localPosition += childStartPos;
+                }
+            }
+
+            // Recursively apply wind sway to child branches
+            ApplyWindToTree(child, windFactor, depth + 1);
+        }
+    }
+
+    private void CreateLeavesHitboxes()
+    {
+        // Find all LineRenderers in the tree
+        LineRenderer[] lineRenderers = GetComponentsInChildren<LineRenderer>();
+
+        // Calculate the number of leaves based on leafDepth
+        int leavesCount = Mathf.RoundToInt(Mathf.Pow(2, leafDepth));
+
+        // Create an array to store the hitboxes of the leaves
+        leavesHitboxes = new GameObject[leavesCount];
+
+        // Create a hitbox for each leaf (end of branch)
+        int leafIndex = 0;
+        foreach (LineRenderer lineRenderer in lineRenderers)
+        {
+            if (lineRenderer.material == leavesMaterial)
+            {
+                // Get the end position of the branch
+                Vector3 endPosition = lineRenderer.GetPosition(1);
+
+                // Create a sphere collider as the hitbox
+                GameObject hitbox = new GameObject("LeafHitbox");
+                hitbox.transform.position = endPosition;
+                hitbox.transform.parent = lineRenderer.transform;
+                SphereCollider collider = hitbox.AddComponent<SphereCollider>();
+                collider.radius = 0.1f; // Adjust the size of the hitbox if needed
+
+                // Store the hitbox in the array
+                leavesHitboxes[leafIndex] = hitbox;
+                leafIndex++;
             }
         }
-
-        // Recursively apply wind sway to child branches
-        ApplyWindToTree(child, windFactor, depth + 1);
     }
-}
 
+    private void CheckPlayerInRange()
+    {
+        // Get the player's position
+        Vector3 playerPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
+
+        // Iterate over the leaves hitboxes
+        foreach (GameObject hitbox in leavesHitboxes)
+        {
+            if (hitbox != null)
+            {
+                // Check if the player is within range of the hitbox
+                float distanceToPlayer = Vector3.Distance(hitbox.transform.position, playerPosition);
+                if (distanceToPlayer <= hitboxRange)
+                {
+                    // Move the branch towards the player
+                    Vector3 directionToPlayer = playerPosition - hitbox.transform.position;
+                    Vector3 newPosition = hitbox.transform.position + directionToPlayer.normalized * branchSpeed * Time.deltaTime;
+                    hitbox.transform.position = newPosition;
+
+                    // Animate the branch segments towards the player using inverse kinematics
+                    AnimateBranchSegments(hitbox, directionToPlayer);
+                }
+            }
+        }
+    }
+
+    private void AnimateBranchSegments(GameObject hitbox, Vector3 directionToPlayer)
+    {
+        print("animating");
+        // Get the parent branch of the hitbox
+        Transform parentBranch = hitbox.transform.parent;
+
+        // Calculate the number of segments in the branch
+        int segmentCount = parentBranch.childCount;
+
+        // Calculate the desired rotation angle for each segment
+        float totalRotationAngle = Vector3.SignedAngle(parentBranch.up, directionToPlayer, parentBranch.forward);
+        float rotationAnglePerSegment = totalRotationAngle / segmentCount;
+
+        // Apply rotation to each segment
+        for (int i = 0; i < segmentCount; i++)
+        {
+            Transform segment = parentBranch.GetChild(i);
+
+            // Calculate the desired rotation for this segment
+            Quaternion targetRotation = Quaternion.AngleAxis(rotationAnglePerSegment * i, parentBranch.forward);
+
+            // Apply rotation using inverse kinematics
+            RotateSegmentUsingIK(segment, targetRotation);
+        }
+    }
+
+    private void RotateSegmentUsingIK(Transform segment, Quaternion targetRotation)
+    {
+        // Get the IK chain from the segment to the root branch
+        List<Transform> ikChain = new List<Transform>();
+        Transform currentSegment = segment;
+
+        while (currentSegment != null)
+        {
+            ikChain.Add(currentSegment);
+            currentSegment = currentSegment.parent;
+        }
+
+        // Reverse the IK chain to start from the root branch
+        ikChain.Reverse();
+
+        // Apply rotation to each segment in the IK chain
+        foreach (Transform segmentInChain in ikChain)
+        {
+            // Calculate the local rotation of the segment
+            Quaternion localRotation = Quaternion.Inverse(segmentInChain.parent.rotation) * targetRotation;
+
+            // Apply the local rotation to the segment
+            segmentInChain.localRotation = localRotation;
+        }
+    }
 
     public void ScrambleFactors()
     {
         depth = Random.Range(3, 10);
         leafDepth = depth - 1;
         scale = Random.Range(0.25f, 1.0f);
-        endStemWidthFactor = Random.Range(0.3f, .5f);
-        beginningStemWidthFactor = Random.Range(0.5f, .75f);
+        endStemWidthFactor = Random.Range(0.5f, 1.5f);
+        beginningStemWidthFactor = Random.Range(0.5f, 1.5f);
         stemLengthFactor = Random.Range(0.05f, .5f);
-        pruneFactor = Random.Range(0.1f, .9f);
+        pruneFactor = Random.Range(0.1f, 0.75f);
         pruneFactorScale = Random.Range(1f, 2f);
         barkMaterial = RandomMaterialGenerator.GenerateRandomMaterial(10.25f);
         leavesMaterial = RandomMaterialGenerator.GenerateRandomMaterial(20.5f);
         windAmplitude = Random.Range(0.00001f, 0.00002f);
         windFrequency = Random.Range(0.5f, 2.0f);
-
     }
 }
+
 
 
 public class RandomMaterialGenerator : MonoBehaviour
