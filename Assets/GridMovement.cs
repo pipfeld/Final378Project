@@ -4,24 +4,21 @@ using UnityEngine;
 
 public class GridMovement : MonoBehaviour
 {
-    private float timeToMove = 0.2f;
-    private bool isMoving;
-    private Vector3 origPos,targetPos;
+    [SerializeField] private float timeToMove = 0.2f;
+    [SerializeField] private bool bounded = true;
+    [SerializeField] private float minX = -9f;
+    [SerializeField] private float maxX = -4f;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private bool isMoving;
+    private Vector3 origPos, targetPos;
 
     // Update is called once per frame
     void Update()
     {
-        
-        if (Input.GetKey(KeyCode.A)&& !isMoving&& transform.position.x > -9)
+        if (Input.GetKey(KeyCode.A) && !isMoving && CanMoveLeft())
             StartCoroutine(MovePlayer(Vector3.left));
-        
-        if (Input.GetKey(KeyCode.D)&& !isMoving && transform.position.x<-4)
+
+        if (Input.GetKey(KeyCode.D) && !isMoving && CanMoveRight())
             StartCoroutine(MovePlayer(Vector3.right));
 
         if(Input.GetKeyDown(KeyCode.Space)&& !isMoving){
@@ -38,16 +35,29 @@ public class GridMovement : MonoBehaviour
             }
         }
     }
-    private IEnumerator MovePlayer(Vector3 direction){
+
+    private bool CanMoveLeft()
+    {
+        return !bounded || transform.position.x > minX;
+    }
+
+    private bool CanMoveRight()
+    {
+        return !bounded || transform.position.x < maxX;
+    }
+
+    private IEnumerator MovePlayer(Vector3 direction)
+    {
         isMoving = true;
-        
+
         float elapsedTime = 0;
 
         origPos = transform.position;
-        targetPos = origPos +direction;
+        targetPos = origPos + direction;
 
-        while(elapsedTime < timeToMove){
-            transform.position = Vector3.Lerp(origPos,targetPos,(elapsedTime/timeToMove));
+        while (elapsedTime < timeToMove)
+        {
+            transform.position = Vector3.Lerp(origPos, targetPos, (elapsedTime / timeToMove));
             elapsedTime += Time.deltaTime;
             yield return null;
         }

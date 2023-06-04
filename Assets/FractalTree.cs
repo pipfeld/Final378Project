@@ -14,13 +14,25 @@ public class FractalTree : MonoBehaviour
     [SerializeField] private float stemLengthFactor = 1f;
     [SerializeField] private float pruneFactor = 0.2f;
     [SerializeField] private float pruneFactorScale = 1.2f;
+    private int leafDepth = 8;
+
+    // Wind properties
+    [SerializeField] private float windAmplitude = 0.0001f;
+    [SerializeField] private float windFrequency = 1f;
 
     private void Start()
     {
-        // draw a fractal tree
+        // Draw a fractal tree
         if (randomize)
             ScrambleFactors();
         DrawTree(transform.position.x, transform.position.y, 90, depth, null, 1f); // x, y, angle, depth, parentBranch, pruneFactorScale
+    }
+
+    private void Update()
+    {
+        // Update wind factor based on time and frequency
+        float windFactor = Mathf.Sin(Time.time * windFrequency) * windAmplitude;
+        ApplyWindToTree(transform, windFactor, 0);
     }
 
     private void DrawTree(float x1, float y1, float angle, int depth, GameObject parentBranch, float pruneFactorScale)
@@ -47,7 +59,7 @@ public class FractalTree : MonoBehaviour
         }
     }
 
-    private GameObject DrawLine(float x1, float y1, float x2, float y2, int color, GameObject parentBranch)
+    private GameObject DrawLine(float x1, float y1, float x2, float y2, int depth, GameObject parentBranch)
     {
         // create gameObject for 1 branch
         GameObject branch = new GameObject("branch");
@@ -60,20 +72,21 @@ public class FractalTree : MonoBehaviour
 
         // add line renderer to our gameObject
         LineRenderer line = branch.AddComponent<LineRenderer>();
+        line.useWorldSpace = false;
         line.enabled = true;
 
         // set line renderer materials based on depth
-        if (color > 4)
+        if (depth > leafDepth - Random.Range(0, leafDepth - leafDepth/2))
         {
             line.material = barkMaterial;
-            line.startWidth = color * 0.08f * beginningStemWidthFactor;
-            line.endWidth = color * 0.06f * endStemWidthFactor;
+            line.startWidth = depth * 0.08f * beginningStemWidthFactor;
+            line.endWidth = depth * 0.06f * endStemWidthFactor;
         }
         else
         {
             line.material = leavesMaterial;
-            line.startWidth = color * 1f * beginningStemWidthFactor;
-            line.endWidth = color * 0.5f * endStemWidthFactor;
+            line.startWidth = depth * .5f * beginningStemWidthFactor;
+            line.endWidth = depth * 0.2f * endStemWidthFactor;
         }
 
         // draw the actual line. Since the original script is 2D, so we set Z=0
@@ -83,19 +96,60 @@ public class FractalTree : MonoBehaviour
         return branch;
     }
 
+private void ApplyWindToTree(Transform treeTransform, float windFactor, int depth = 0)
+{
+    for (int i = 0; i < treeTransform.childCount; i++)
+    {
+        Transform child = treeTransform.GetChild(i);
+
+        // Skip applying wind to the first branch (genesis)
+        if (depth > 0)
+        {
+            // Apply wind sway to each branch
+            Vector3 originalPosition = child.localPosition;
+            Vector3 swayPosition = new Vector3(originalPosition.x + windFactor * depth, originalPosition.y, originalPosition.z);
+            child.localPosition = swayPosition;
+
+            // Apply wind scale to each branch
+            Vector3 originalScale = child.localScale;
+            float scaleMultiplier = 1f + windFactor * 0.1f * depth;
+            Vector3 swayScale = new Vector3(originalScale.x * scaleMultiplier, originalScale.y, originalScale.z * scaleMultiplier);
+            child.localScale = swayScale;
+
+            // Adjust child branch start position to match end position of current branch
+            if (i > 0)
+            {
+                Transform prevChild = treeTransform.GetChild(i - 1);
+                Vector3 prevChildEndPos = prevChild.TransformPoint(Vector3.zero);
+                Vector3 childStartPos = child.InverseTransformPoint(prevChildEndPos);
+                child.localPosition += childStartPos;
+            }
+        }
+
+        // Recursively apply wind sway to child branches
+        ApplyWindToTree(child, windFactor, depth + 1);
+    }
+}
+
+
     public void ScrambleFactors()
     {
         depth = Random.Range(3, 10);
-        scale = Random.Range(0.5f, 1.0f);
-        endStemWidthFactor = Random.Range(0.5f, 1.5f);
-        beginningStemWidthFactor = Random.Range(0.5f, 1.5f);
+        leafDepth = depth - 1;
+        scale = Random.Range(0.25f, 1.0f);
+        endStemWidthFactor = Random.Range(0.3f, .5f);
+        beginningStemWidthFactor = Random.Range(0.5f, .75f);
         stemLengthFactor = Random.Range(0.05f, .5f);
-        pruneFactor = Random.Range(0.1f, 0.5f);
+        pruneFactor = Random.Range(0.1f, .9f);
         pruneFactorScale = Random.Range(1f, 2f);
         barkMaterial = RandomMaterialGenerator.GenerateRandomMaterial(10.25f);
         leavesMaterial = RandomMaterialGenerator.GenerateRandomMaterial(20.5f);
+        windAmplitude = Random.Range(0.00001f, 0.00002f);
+        windFrequency = Random.Range(0.5f, 2.0f);
+
     }
 }
+
 
 public class RandomMaterialGenerator : MonoBehaviour
 {

@@ -4,8 +4,11 @@ using System.Collections.Generic;
 
 public class RandomFractalTreeSpawner : MonoBehaviour
 {
-    public Tilemap tilemap;
-    public int treeCount = 5;
+    [SerializeField] public Tilemap tilemap;
+    [SerializeField] public int treeCount = 5;
+    [SerializeField] public int granularity = 5;
+    [SerializeField] public float groundLevel = -2.0f;
+    [SerializeField] public float skipChance = 0.7f;
 
     private void Start()
     {
@@ -14,7 +17,7 @@ public class RandomFractalTreeSpawner : MonoBehaviour
 
     private void SpawnRandomFractalTrees()
     {
-        List<Vector3Int> occupiedPositions = GetOccupiedPositions();
+        List<Vector3> occupiedPositions = GetOccupiedPositions();
 
         for (int i = 0; i < treeCount; i++)
         {
@@ -22,8 +25,8 @@ public class RandomFractalTreeSpawner : MonoBehaviour
                 break;
 
             int randomIndex = Random.Range(0, occupiedPositions.Count);
-            Vector3Int randomPosition = occupiedPositions[randomIndex];
-            Vector3 spawnPosition = tilemap.CellToWorld(randomPosition) + new Vector3(0.5f, 0.5f, 0f); // Adjusted spawn position
+            Vector3 randomPosition = occupiedPositions[randomIndex];
+            Vector3 spawnPosition = tilemap.CellToWorld(Vector3Int.RoundToInt(randomPosition)) + new Vector3(0.0f, 0.0f, 0f); // Adjusted spawn position
 
             SpawnFractalTree(spawnPosition);
 
@@ -31,9 +34,9 @@ public class RandomFractalTreeSpawner : MonoBehaviour
         }
     }
 
-    private List<Vector3Int> GetOccupiedPositions()
+    private List<Vector3> GetOccupiedPositions()
     {
-        List<Vector3Int> occupiedPositions = new List<Vector3Int>();
+        List<Vector3> occupiedPositions = new List<Vector3>();
 
         BoundsInt bounds = tilemap.cellBounds;
 
@@ -46,10 +49,19 @@ public class RandomFractalTreeSpawner : MonoBehaviour
 
                 if (tile != null)
                 {
-                    Vector3Int abovePosition = tilePosition + new Vector3Int(0, 1, 0);
-                    if (tilemap.GetTile(abovePosition) != null && tilemap.GetTile(tilePosition + new Vector3Int(0, -1, 0)) == null) // Check if tile above is occupied and there is no tile below
+                    Vector3 spawnPosition = tilemap.CellToWorld(tilePosition) + new Vector3(Random.Range(-0.4f, 0.4f), 0.0f, 0f); // Adjusted spawn position
+                    spawnPosition.y = groundLevel;
+                    for (int i = 0; i < granularity; i++)
                     {
-                        occupiedPositions.Add(tilePosition);
+                        if (Random.value <= skipChance) // Skip adding position based on skipChance probability
+                            continue;
+
+                        float xOffset = Random.Range(-0.4f, 0.4f);
+                        //float yOffset = Random.Range(-0.4f, 0.4f);
+                        Vector3 offsetPosition = spawnPosition + new Vector3(xOffset, 0f, 0f);
+
+                        if (!IsPositionOccupied(offsetPosition, occupiedPositions))
+                            occupiedPositions.Add(offsetPosition);
                     }
                 }
             }
@@ -58,10 +70,27 @@ public class RandomFractalTreeSpawner : MonoBehaviour
         return occupiedPositions;
     }
 
+    private bool IsPositionOccupied(Vector3 position, List<Vector3> occupiedPositions)
+    {
+        // Check if any occupied position is within a certain threshold distance of the given position
+        float thresholdDistance = 0.2f;
+
+        foreach (Vector3 occupiedPosition in occupiedPositions)
+        {
+            if (Vector3.Distance(occupiedPosition, position) <= thresholdDistance)
+                return true;
+        }
+
+        return false;
+    }
+
+
+
     private void SpawnFractalTree(Vector3 spawnPosition)
     {
         GameObject fractalTreeObject = new GameObject("FractalTree");
-        fractalTreeObject.transform.position = spawnPosition;
+        float xOffset = Random.Range(-0.2f, 0.2f);
+        fractalTreeObject.transform.position = spawnPosition + new Vector3(xOffset, 0f, 0f);
 
         FractalTree fractalTree = fractalTreeObject.AddComponent<FractalTree>();
         fractalTree.randomize = true;
