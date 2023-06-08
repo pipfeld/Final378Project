@@ -16,22 +16,24 @@ public class TileManager : MonoBehaviour
     
     [SerializeField] private GameObject shape;
     [SerializeField] private GameObject sprite;
-    // Start is called before the first frame update
-    void Start()
-    {
-        foreach(var position in plants.cellBounds.allPositionsWithin){
-            if (plants.HasTile(position))
-            {
-                Debug.Log(position);
-                plants.SetTile(position,Hidden);
-            }
-        }
+
+    private List<Crops> pieces;
+
+    [SerializeField]
+    private List<Tile> cropTiles;
+    [SerializeField]
+    private List<Crops> crops;
+    
+    void Start(){
+        pieces = new List<Crops>();
     }
+
+    
 
     public bool IsInteractable(Vector3Int position){
         position = new Vector3Int(position.x-1, position.y-1,0);
         TileBase tile = plants.GetTile(position);
-        Debug.Log(position);
+        Debug.Log(tile);
         //Debug.Log(tile);
 
         if(tile != null){
@@ -55,10 +57,16 @@ public class TileManager : MonoBehaviour
     }
 
     public void SetInteracted(Vector3Int position){
+        position = new Vector3Int(position.x-1, position.y-1,0);
+        
         if(stack <7){
+            
+            int temp = cropTiles.IndexOf(plants.GetTile(position) as Tile);
+            Debug.Log(crops[temp]);
+            pieces.Add(crops[temp]);
             position = new Vector3Int(-4,-2+stack,0);
             stack++;
-            champion.SetTile(position,Build);
+            champion.SetTile(position,crops[temp].sprite);
         }
         
         
@@ -78,9 +86,9 @@ public class TileManager : MonoBehaviour
             S.transform.parent = obj.transform;
             stats.sprites.Add(S);
             SpriteRenderer sr = S.GetComponent<SpriteRenderer>();
-            sr.sprite = Build.sprite;
-            stats.damage += 1;
-            stats.health += 3;
+            sr.sprite = pieces[stack-1].sprite.sprite;
+            stats.damage += pieces[stack-1].damage;
+            stats.health += pieces[stack-1].health;
 
         }
         

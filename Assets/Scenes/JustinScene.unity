@@ -268,8 +268,8 @@ Tilemap:
   - first: {x: -10, y: -2, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 0
-      m_TileSpriteIndex: 0
+      m_TileIndex: 2
+      m_TileSpriteIndex: 2
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -278,8 +278,8 @@ Tilemap:
   - first: {x: -8, y: -2, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 0
-      m_TileSpriteIndex: 0
+      m_TileIndex: 1
+      m_TileSpriteIndex: 1
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -297,11 +297,19 @@ Tilemap:
       m_AllTileFlags: 1073741825
   m_AnimatedTiles: {}
   m_TileAssetArray:
-  - m_RefCount: 3
+  - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: 54210a01494904135b3ffd46d6cfcc88, type: 2}
+  - m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: 80a92fdbf3baa4c139787e220c5dd535, type: 2}
+  - m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: c7790f757feb24ac2b3278323c7eaf24, type: 2}
   m_TileSpriteArray:
-  - m_RefCount: 3
+  - m_RefCount: 1
     m_Data: {fileID: -6233458931719022677, guid: fc584d329b77b9545b9c9c8bb829e553, type: 3}
+  - m_RefCount: 1
+    m_Data: {fileID: 3702685922149842701, guid: fc584d329b77b9545b9c9c8bb829e553, type: 3}
+  - m_RefCount: 1
+    m_Data: {fileID: 3666724916130892037, guid: fc584d329b77b9545b9c9c8bb829e553, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 3
     m_Data:
@@ -612,6 +620,14 @@ MonoBehaviour:
   Build: {fileID: 11400000, guid: 4d523e06978bd487c9cd88ea1ff4f4f2, type: 2}
   shape: {fileID: 8264186759373428700, guid: e62812bfec656e8468fe0c7489ce026f, type: 3}
   sprite: {fileID: 8264186759373428700, guid: 1e3cd1228eb211049bce56247e746609, type: 3}
+  cropTiles:
+  - {fileID: 11400000, guid: 54210a01494904135b3ffd46d6cfcc88, type: 2}
+  - {fileID: 11400000, guid: 80a92fdbf3baa4c139787e220c5dd535, type: 2}
+  - {fileID: 11400000, guid: c7790f757feb24ac2b3278323c7eaf24, type: 2}
+  crops:
+  - {fileID: 11400000, guid: abfcf7123dd574078a4709061c88bcba, type: 2}
+  - {fileID: 11400000, guid: 5d096dac4e033453e85471b1645e8be1, type: 2}
+  - {fileID: 11400000, guid: 538dfe90dec684584aa236aec6343d70, type: 2}
 --- !u!4 &1670103777
 Transform:
   m_ObjectHideFlags: 0
