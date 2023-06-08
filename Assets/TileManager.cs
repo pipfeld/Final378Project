@@ -89,7 +89,7 @@ public class TileManager : MonoBehaviour
             sr.sprite = pieces[stack-1].sprite.sprite;
             stats.damage += pieces[stack-1].damage;
             stats.health += pieces[stack-1].health;
-
+            pieces.RemoveAt(stack-1);
         }
         
         obj.GetComponent<BoxCollider2D>().size = new Vector2(obj.GetComponent<BoxCollider2D>().size.x,temp);
