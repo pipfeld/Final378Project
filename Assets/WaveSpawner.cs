@@ -21,6 +21,7 @@ public class WaveSpawner : MonoBehaviour
     private float nextSpawnTime;
 
     private bool canSpawn = true;
+    private bool timerDone = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,7 +37,7 @@ public class WaveSpawner : MonoBehaviour
 
     void SpawnWave()
     {
-        if(canSpawn && nextSpawnTime < Time.time)
+        if(timerDone && canSpawn && nextSpawnTime < Time.time)
         {
             GameObject randomEnemy = currentWave.typeOfEnemies[Random.Range(0, currentWave.typeOfEnemies.Length)];
             Transform randomPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
@@ -47,5 +48,9 @@ public class WaveSpawner : MonoBehaviour
                 canSpawn = false;
             }
         }
+    }
+
+    public void timerIsDone(){
+        timerDone = true;
     }
 }
