@@ -17,7 +17,7 @@ public class TileManager : MonoBehaviour
     [SerializeField] private GameObject shape;
     [SerializeField] private GameObject sprite;
 
-    private List<Crops> pieces;
+    private Stack<Crops> pieces;
 
     [SerializeField]
     private List<Tile> cropTiles;
@@ -25,7 +25,7 @@ public class TileManager : MonoBehaviour
     private List<Crops> crops;
     
     void Start(){
-        pieces = new List<Crops>();
+        pieces = new Stack<Crops>();
     }
 
     
@@ -63,7 +63,7 @@ public class TileManager : MonoBehaviour
             
             int temp = cropTiles.IndexOf(plants.GetTile(position) as Tile);
             Debug.Log(crops[temp]);
-            pieces.Add(crops[temp]);
+            pieces.Push(crops[temp]);
             position = new Vector3Int(-4,-2+stack,0);
             stack++;
             champion.SetTile(position,crops[temp].sprite);
@@ -82,14 +82,15 @@ public class TileManager : MonoBehaviour
 
             champion.SetTile(position, null);
 
-            GameObject S = Instantiate(sprite, new Vector3(-1.5f, -1.5f + (temp-stack), 0), Quaternion.identity);
+            GameObject S = Instantiate(sprite, new Vector3(-1.5f, -1.5f + stack-1, 0), Quaternion.identity);
             S.transform.parent = obj.transform;
             stats.sprites.Add(S);
             SpriteRenderer sr = S.GetComponent<SpriteRenderer>();
-            sr.sprite = pieces[stack-1].sprite.sprite;
-            stats.damage += pieces[stack-1].damage;
-            stats.health += pieces[stack-1].health;
-            pieces.RemoveAt(stack-1);
+            Crops piece = pieces.Pop();
+            sr.sprite = piece.sprite.sprite;
+            stats.damage += piece.damage;
+            stats.health += piece.health;
+            
         }
         
         obj.GetComponent<BoxCollider2D>().size = new Vector2(obj.GetComponent<BoxCollider2D>().size.x,temp);
