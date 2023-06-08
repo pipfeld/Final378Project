@@ -446,7 +446,8 @@ MonoBehaviour:
     noOfEnemies: 3
     typeOfEnemies:
     - {fileID: 630137685330103011, guid: 82ab0e53154e84ed89ce9d8e3f50f6a3, type: 3}
-    spawnInterval: 3
+    - {fileID: 6472992995362033307, guid: a02b5d3041885441aa35d3cc14d55abe, type: 3}
+    spawnInterval: 3.5
   - waveName: Wave2
     noOfEnemies: 4
     typeOfEnemies:
