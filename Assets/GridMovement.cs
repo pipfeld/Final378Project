@@ -12,24 +12,33 @@ public class GridMovement : MonoBehaviour
     private bool isMoving;
     private Vector3 origPos, targetPos;
 
+
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.A) && !isMoving && CanMoveLeft())
+        if (Input.GetKey(KeyCode.A) && !isMoving && CanMoveLeft()){
+            GetComponent<SpriteRenderer>().flipX = true;
+            GetComponent<Animator>().SetBool("Run", true);
             StartCoroutine(MovePlayer(Vector3.left));
+        }
 
-        if (Input.GetKey(KeyCode.D) && !isMoving && CanMoveRight())
+        if (Input.GetKey(KeyCode.D) && !isMoving && CanMoveRight()){
+            GetComponent<SpriteRenderer>().flipX = false;
+            GetComponent<Animator>().SetBool("Run", true);
             StartCoroutine(MovePlayer(Vector3.right));
+        }
 
         if(Input.GetKeyDown(KeyCode.Space)&& !isMoving){
             //Debug.Log("Here");
             Vector3Int position = new Vector3Int((int)transform.position.x,(int)transform.position.y,0);
             if(GameManager.instance.tileManager.IsInteractable(position)){
                 GameManager.instance.tileManager.SetInteracted(position);
+                GetComponent<Animator>().SetTrigger("interact");
                 
             }
             if (GameManager.instance.tileManager.IsChapmion(position))
             {
+                GetComponent<Animator>().SetTrigger("interact");
                 GameManager.instance.tileManager.SetChampion(position);
 
             }
@@ -65,5 +74,6 @@ public class GridMovement : MonoBehaviour
         transform.position = targetPos;
 
         isMoving = false;
+        GetComponent<Animator>().SetBool("Run", false);
     }
 }
