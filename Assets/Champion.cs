@@ -7,16 +7,20 @@ using UnityEngine.Tilemaps;
 public class Champion : MonoBehaviour
 {
     public Tile[] stack;
-    public int health;
+    public int health,maxHealth;
     public int damage;
     public List<GameObject> sprites;
+
+    [SerializeField] 
+    private battlehealthbar healthBar;
 
 
 
     // Start is called before the first frame update
     void Start()
     {
-
+        healthBar = GetComponentInChildren<battlehealthbar>();
+        
     }
 
     // Update is called once per frame
@@ -32,6 +36,7 @@ public class Champion : MonoBehaviour
         if(temp.CompareTag("Enemy")){
             Debug.Log("here");
             health -= temp.GetComponent<Enemy>().attack;
+            healthBar.setHealthBar(health, maxHealth);
             GetComponent<Rigidbody2D>().velocity = new Vector2(-3,0);
             if(health <=0){
                 foreach(GameObject s in sprites){

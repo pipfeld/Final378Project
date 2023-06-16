@@ -116,10 +116,12 @@ public class TileManager : MonoBehaviour
             stats.health += piece.health;
             
         }
-        
+        stats.maxHealth = stats.health;
         obj.GetComponent<BoxCollider2D>().size = new Vector2(obj.GetComponent<BoxCollider2D>().size.x,temp);
+        obj.transform.GetChild(0).transform.position += new Vector3(0,temp-1,0);
         if(temp%2==1){
             obj.GetComponent<BoxCollider2D>().offset = new Vector2(0, (temp) / 2);
+            
         }else{
             obj.GetComponent<BoxCollider2D>().offset = new Vector2(0, (temp) / 2-.5f);
         }
