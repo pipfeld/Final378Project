@@ -33,6 +33,11 @@ public class WaveSpawner : MonoBehaviour
     {
         currentWave = waves[currentWaveNumber];
         SpawnWave();
+        GameObject[] totalEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+        if (totalEnemies.Length == 0 && !canSpawn && currentWaveNumber+1 != waves.Length){
+            canSpawn = true;
+            currentWaveNumber++;
+        }
     }
 
     void SpawnWave()
