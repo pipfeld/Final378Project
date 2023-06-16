@@ -7,12 +7,16 @@ public class Enemy : MonoBehaviour
     public int maxHealth,attack;
     private int health;
     public float speed;
-    [SerializeField] battlehealthbar healthBar;
+    [SerializeField] 
+    private battlehealthbar healthBar;
+
+    private GameManager gameManager;
     // Start is called before the first frame update
     void Start()
     {
         healthBar = GetComponentInChildren<battlehealthbar>();
         health = maxHealth;
+        gameManager = GameManager.instance;
     }
 
     // Update is called once per frame
@@ -32,6 +36,20 @@ public class Enemy : MonoBehaviour
             health -= temp.GetComponent<Champion>().damage;
             healthBar.setHealthBar(health, maxHealth);
             GetComponent<Rigidbody2D>().velocity = new Vector2(3, 0);
+            if (health <= 0)
+            {
+                
+                Destroy(this.gameObject);
+            }
+        }
+
+        if (temp.CompareTag("Gate"))
+        {
+            Debug.Log("Gate");
+            health -= 4;
+            gameManager.health -= attack;
+            healthBar.setHealthBar(health, maxHealth);
+            GetComponent<Rigidbody2D>().velocity = new Vector2(6, 0);
             if (health <= 0)
             {
                 
