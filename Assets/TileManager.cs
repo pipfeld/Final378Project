@@ -23,9 +23,29 @@ public class TileManager : MonoBehaviour
     private List<Tile> cropTiles;
     [SerializeField]
     private List<Crops> crops;
+
+    static float ft;
     
-    void Start(){
+    private void Start(){
         pieces = new Stack<Crops>();
+    }
+
+    private void Update(){
+        ft += Time.deltaTime;
+        if(ft>=1.5){
+            ft = 0;
+            
+            foreach (Crops c in crops)
+            {
+                if(c.stage < 3){
+                    c.stage++;
+                    plants.SetTile(c.pos,c.grow_bottom[c.stage]);
+                    if(c.stage == 3){
+                        plants.SetTile(new Vector3Int(c.pos.x,c.pos.y+1,0),c.grow_top);
+                    }
+                }
+            }
+        }
     }
 
     
@@ -58,12 +78,16 @@ public class TileManager : MonoBehaviour
 
     public void SetInteracted(Vector3Int position){
         position = new Vector3Int(position.x-1, position.y-1,0);
+        Debug.Log(position);
         
         if(stack <7){
             
             int temp = cropTiles.IndexOf(plants.GetTile(position) as Tile);
             Debug.Log(crops[temp]);
             pieces.Push(crops[temp]);
+            plants.SetTile(position,null);
+            plants.SetTile(new Vector3Int(position.x,position.y-1,0),crops[temp].grow_bottom[0]);
+            crops[temp].stage = 0;
             position = new Vector3Int(-4,-2+stack,0);
             stack++;
             champion.SetTile(position,crops[temp].sprite);

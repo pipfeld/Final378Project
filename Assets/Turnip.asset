@@ -15,3 +15,11 @@ MonoBehaviour:
   damage: 2
   health: 1
   sprite: {fileID: 11400000, guid: 12f0835e4a44e63468c335103688cd8c, type: 2}
+  stage: 0
+  grow_bottom:
+  - {fileID: 11400000, guid: d136749a6460c7449b964566ad46e77a, type: 2}
+  - {fileID: 11400000, guid: 636e50126670fc348b50d3ccd68fef2e, type: 2}
+  - {fileID: 11400000, guid: 84e49ce3e7c53cc4e99caa8b2de39e5f, type: 2}
+  - {fileID: 11400000, guid: ac08646553a599b438cf0c61570b7561, type: 2}
+  grow_top: {fileID: 11400000, guid: 78617aa84ead1134eb9963453662196c, type: 2}
+  pos: {x: -8, y: -3, z: 0}
