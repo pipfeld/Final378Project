@@ -737,7 +737,7 @@ MonoBehaviour:
   - waveName: Wave3
     noOfEnemies: 1
     typeOfEnemies:
-    - {fileID: 630137685330103011, guid: 82ab0e53154e84ed89ce9d8e3f50f6a3, type: 3}
+    - {fileID: 6472992995362033307, guid: a02b5d3041885441aa35d3cc14d55abe, type: 3}
     spawnInterval: 0
   spawnPoints:
   - {fileID: 4070132}
@@ -2617,6 +2617,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startTime: 10
+  TimerText: {fileID: 1442111222}
   timerText: {fileID: 1442111222}
   wavespawner: {fileID: 987635892}
 --- !u!4 &1938505651

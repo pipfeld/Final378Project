@@ -11,6 +11,8 @@ public class timer : MonoBehaviour
     // float: current time
     private float currentTime;
 
+    public TMP_Text TimerText;
+
     // TMP_Text: timer text component
     [SerializeField] TMP_Text timerText;
 
@@ -31,6 +33,7 @@ public class timer : MonoBehaviour
         if (currentTime <= 0){
             currentTime = 0;
             wavespawner.timerIsDone();
+            Destroy(TimerText);
         }
         timerText.text = "Time before battle: " + currentTime.ToString("0.0");
     }
