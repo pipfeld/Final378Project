@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     public TileManager tileManager;
 
     public int health = 20;
+    public int maxHealth = 20;
+    [SerializeField] battlehealthbar healthBar;
 
     private void Awake() {
         if(instance != null && instance != this){
@@ -23,6 +25,7 @@ public class GameManager : MonoBehaviour
     }
     
     private void Update(){
+        healthBar.setHealthBar(health, maxHealth);
         if(health<=0){
             Debug.Log("you lost!");
         }

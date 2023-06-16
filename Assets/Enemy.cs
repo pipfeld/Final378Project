@@ -37,8 +37,7 @@ public class Enemy : MonoBehaviour
             healthBar.setHealthBar(health, maxHealth);
             GetComponent<Rigidbody2D>().velocity = new Vector2(3, 0);
             if (health <= 0)
-            {
-                
+            { 
                 Destroy(this.gameObject);
             }
         }
@@ -46,13 +45,12 @@ public class Enemy : MonoBehaviour
         if (temp.CompareTag("Gate"))
         {
             Debug.Log("Gate");
-            health -= 4;
+            health -= 2;
             gameManager.health -= attack;
             healthBar.setHealthBar(health, maxHealth);
             GetComponent<Rigidbody2D>().velocity = new Vector2(6, 0);
             if (health <= 0)
             {
-                
                 Destroy(this.gameObject);
             }
         }
