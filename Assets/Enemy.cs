@@ -35,7 +35,7 @@ public class Enemy : MonoBehaviour
             Debug.Log("here");
             health -= temp.GetComponent<Champion>().damage;
             healthBar.setHealthBar(health, maxHealth);
-            GetComponent<Rigidbody2D>().velocity = new Vector2(3, 0);
+            GetComponent<Rigidbody2D>().velocity = new Vector2(6,0);
             if (health <= 0)
             { 
                 Destroy(this.gameObject);
