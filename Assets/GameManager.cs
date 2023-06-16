@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
     private void Update(){
         healthBar.setHealthBar(health, maxHealth);
         if(health<=0){
+            SceneManager.LoadScene("Lose");
             Debug.Log("you lost!");
         }
     }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 [System.Serializable]
 
 public class Wave{
@@ -37,6 +38,9 @@ public class WaveSpawner : MonoBehaviour
         if (totalEnemies.Length == 0 && !canSpawn && currentWaveNumber+1 != waves.Length){
             canSpawn = true;
             currentWaveNumber++;
+        }
+        else if (totalEnemies.Length == 0 && !canSpawn){
+            SceneManager.LoadScene("Win");
         }
     }
 

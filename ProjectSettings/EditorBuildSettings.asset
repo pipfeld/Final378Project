@@ -11,4 +11,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/JustinScene.unity
     guid: 5f26cd3df35ded745ac5e79b8b8ce99b
+  - enabled: 1
+    path: Assets/Scenes/TitleScreen.unity
+    guid: 2af4b4d59ed184e7a86475ff8746a66a
+  - enabled: 1
+    path: Assets/Scenes/Instructions.unity
+    guid: e6aefa9f72e724de8b570200005a9e4b
+  - enabled: 1
+    path: Assets/Scenes/Win.unity
+    guid: 8aabfb1371bb54178a259bfb5ad0f230
+  - enabled: 1
+    path: Assets/Scenes/Lose.unity
+    guid: 3ca185c518c6943bb8c5da6859ef499d
   m_configObjects: {}
