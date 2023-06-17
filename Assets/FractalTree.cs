@@ -156,7 +156,7 @@ public class RandomMaterialGenerator : MonoBehaviour
 {
     public static Material GenerateRandomMaterial(float lightness)
     {
-        Shader myShader = Shader.Find("Mobile/VertexLit");
+        Shader myShader = Shader.Find("Standard");
         if (myShader == null)
             Debug.LogError("shader find failed");
         // Create a new instanced material
